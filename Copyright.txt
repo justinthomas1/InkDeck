@@ -1,0 +1,4 @@
+Created by Justin Thomas
+Distributed under the GNU General Public License
+Please see the following for more information:
+https://www.gnu.org/licenses/gpl-3.0.en.html

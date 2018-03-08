@@ -40,6 +40,22 @@ public class SuperSecretSpyCoder extends JPanel{
 		private static File privateFile;
 		
 		
+		private static ArrayList<String> splashes;
+		private static int splashSelector;
+		
+		
+		/*
+		
+		TODO:
+		-Add config file?
+		
+		*/
+		
+		
+		
+		
+		
+		
 	public static void main(String[] args) throws Exception{
 		
 		try{
@@ -63,20 +79,30 @@ public class SuperSecretSpyCoder extends JPanel{
 		catch(Exception e){
 
 		}
+
+		splashes= new ArrayList<String>();
 		
-		
-		//TODO: Edit Help button
-		//TODO: Add Copyright and Splash Screen listeners
-		
+		try{
+			Scanner splashScanner= new Scanner(new File("Splashes.txt"));
+			
+			while(splashScanner.hasNext()){
+				splashes.add(splashScanner.nextLine());
+			}
+			
+			splashSelector= (int) (Math.random()*splashes.size());
+		}
+		catch(Exception e){
+			
+		}
 		
 		
 		jf= new JFrame();
 		spy= new SuperSecretSpyCoder();
 		jf.add(spy);
 		jf.pack();
-		jf.setSize(900,900);
+		jf.setSize(900,600);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jf.setTitle("EncDec");
+		jf.setTitle("InkDeck");
 		
 		try{
 			Image image= ImageIO.read(new File("Icon.png"));
@@ -87,6 +113,8 @@ public class SuperSecretSpyCoder extends JPanel{
 		}
 		
 		jf.setVisible(true);
+		
+		JOptionPane.showMessageDialog(new JFrame(),("Splash Message #" + (splashSelector+1) + "\n" + splashes.get(splashSelector)));
 		
 	}
 	
@@ -109,25 +137,30 @@ public class SuperSecretSpyCoder extends JPanel{
 		newMenuItem.addActionListener(newList);
 		
 		//Open
-		JMenuItem openMenuItem= new JMenuItem("Open");
+		JMenuItem openMenuItem= new JMenuItem("Open (a plaintext file)");
 		fileMenu.add(openMenuItem);
 		OpenFileListener openList= new OpenFileListener();
 		openMenuItem.addActionListener(openList);
 		
 		//Save
-		JMenuItem saveMenuItem= new JMenuItem("Save (save as Plaintext)");
+		JMenuItem saveMenuItem= new JMenuItem("Save (as a plaintext file)");
 		fileMenu.add(saveMenuItem);
 		SaveFileListener saveList= new SaveFileListener();
 		saveMenuItem.addActionListener(saveList);
 		
+		//------------------------------------------------------------------------------------------------------
+		//Separator
+		fileMenu.addSeparator();
+		//------------------------------------------------------------------------------------------------------
+		
 		//Encrypt
-		JMenuItem encryptMenuItem= new JMenuItem("Encrypt (save as Ciphertext)");
+		JMenuItem encryptMenuItem= new JMenuItem("Encrypt (as a ciphertext file)");
 		fileMenu.add(encryptMenuItem);
 		EncryptListener encList= new EncryptListener();
 		encryptMenuItem.addActionListener(encList);
 		
 		//Decrypt
-		JMenuItem decryptMenuItem= new JMenuItem("Decrypt");
+		JMenuItem decryptMenuItem= new JMenuItem("Decrypt (a ciphertext file)");
 		fileMenu.add(decryptMenuItem);
 		DecryptListener decList= new DecryptListener();
 		decryptMenuItem.addActionListener(decList);
@@ -140,15 +173,26 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		
 		//Help
-		JMenuItem helpMenuItem= new JMenuItem("Help (Doesn't work)");
+		JMenuItem helpMenuItem= new JMenuItem("Help");
 		fileMenu.add(helpMenuItem);
 		HelpListener helpList= new HelpListener();
 		helpMenuItem.addActionListener(helpList);
 		
-		
-		
 		//Copyright
+		JMenuItem copyrightMenuItem= new JMenuItem("Copyright");
+		fileMenu.add(copyrightMenuItem);
+		CopyrightListener copyList= new CopyrightListener();
+		copyrightMenuItem.addActionListener(copyList);
+		
 		//Splash screen
+		JMenuItem splashScreenMenuItem= new JMenuItem("View Splash Message");
+		fileMenu.add(splashScreenMenuItem);
+		SplashScreenListener splashList= new SplashScreenListener();
+		splashScreenMenuItem.addActionListener(splashList);
+		
+		
+		
+		
 		
 		
 		//The text area
@@ -460,7 +504,58 @@ public class SuperSecretSpyCoder extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			
+			try{
+			Scanner reader= new Scanner(new File("Help.txt"));
 			
+			String text= "";
+			
+			while(reader.hasNext()){
+			text+=reader.nextLine();
+			}
+			
+			JOptionPane.showMessageDialog(new JFrame(), text);
+			}
+			catch(Exception e){
+				
+			}
+			
+		}
+		
+	}
+	
+	private class CopyrightListener implements ActionListener{
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			try{
+			Scanner reader= new Scanner(new File("Copyright.txt"));
+			
+			String text= "";
+			
+			text+=reader.nextLine();
+			
+			while(reader.hasNext()){
+				text+="\n";
+				text+=reader.nextLine();
+			}
+			
+			JOptionPane.showMessageDialog(new JFrame(), text);
+			}
+			catch(Exception e){
+				
+			}
+			
+		}
+		
+	}
+	
+	private class SplashScreenListener implements ActionListener{
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			JOptionPane.showMessageDialog(new JFrame(),("Splash Message #" + (splashSelector+1) + "\n" + splashes.get(splashSelector)));
 			
 		}
 		
