@@ -1,0 +1,36 @@
+Created by Justin Thomas
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------
+SECTION 1: The toolbar
+-------------------------------------------------------------------------------------------
+
+File
+
+-New - Clears all text entered.
+-Open - Opens a plaintext file and dislays the contents.
+-Save - Saves the entered text as a .txt file as plaintext.
+
+-Encrypt - Saves the entered text as a .txt file encrypted with the public key. If no public key is selected, you will be prompted to select one.
+-Decrypt - Opens an encrypted text file and displays the contents.
+
+-Help - Refers the user to the Github page or the MANUAL.txt included with the program.
+-Copyright - Displays copyright information.
+-View splash screen - Displays the splash screen shown when the program is first opened.
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------
+SECTION 2: The sidebar
+-------------------------------------------------------------------------------------------
+
+Select Public Key - Opens a dialog box where the user can select a public key. Remember, this should be the key for the person you intend to send a message to.
+
+Select Private Key - Opens a dialog box where the user can select a private key. Remember, this should be your key.
