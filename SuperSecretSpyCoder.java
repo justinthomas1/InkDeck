@@ -43,6 +43,9 @@ public class SuperSecretSpyCoder extends JPanel{
 		private static ArrayList<String> splashes;
 		private static int splashSelector;
 		
+		private BufferedReader splashesReader;
+		private BufferedReader helpReader;
+		private BufferedReader copyrightReader;
 		
 		/*
 		
@@ -79,21 +82,6 @@ public class SuperSecretSpyCoder extends JPanel{
 		catch(Exception e){
 
 		}
-
-		splashes= new ArrayList<String>();
-		
-		try{
-			Scanner splashScanner= new Scanner(new File("Splashes.txt"));
-			
-			while(splashScanner.hasNext()){
-				splashes.add(splashScanner.nextLine());
-			}
-			
-			splashSelector= (int) (Math.random()*splashes.size());
-		}
-		catch(Exception e){
-			
-		}
 		
 		
 		jf= new JFrame();
@@ -103,24 +91,32 @@ public class SuperSecretSpyCoder extends JPanel{
 		jf.setSize(900,600);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jf.setTitle("InkDeck");
-		
-		try{
-			Image image= ImageIO.read(new File("Icon.png"));
-			jf.setIconImage(image);
-		}
-		catch(Exception e){
-			
-		}
-		
+		jf.setLocationRelativeTo(null);
 		jf.setVisible(true);
 		
-		JOptionPane.showMessageDialog(new JFrame(),("Splash Message #" + (splashSelector+1) + "\n" + splashes.get(splashSelector)));
+		
+		if(!splashes.isEmpty()){
+			JOptionPane.showMessageDialog(new JFrame(),("Splash Message #" + (splashSelector+1) + "\n" + splashes.get(splashSelector)));
+		}
+		else{
+			JOptionPane.showMessageDialog(new JFrame(),("Splash Message #0\nMissingNo."));
+		}
+		
+		
 		
 	}
 	
 	
 	
 	public SuperSecretSpyCoder(){
+		try{			
+			Image image= new ImageIcon(getClass().getResource("Icon.png")).getImage();
+			jf.setIconImage(image);
+		}
+		catch(Exception e){
+			
+		}
+		
 		this.setFocusable(true);
 		
 		jfc= new JFileChooser();
@@ -195,6 +191,59 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		//NEW MENU
+		JMenu rsaMenu= new JMenu("RSA");
+		menuBar.add(rsaMenu);
+		
+		//Generate New Keys
+		JMenuItem generateNewKeysMenuItem= new JMenuItem("Generate New Keys");
+		rsaMenu.add(generateNewKeysMenuItem);
+		GenerateListener genList= new GenerateListener();
+		generateNewKeysMenuItem.addActionListener(genList);
+		
+		
+		//------------------------------------------------------------------------------------------------------
+		//Separator
+		rsaMenu.addSeparator();
+		//------------------------------------------------------------------------------------------------------
+		
+		
+		//Select Public Key
+		JMenuItem selectPublicKeyMenuItem= new JMenuItem("Select Public Key");
+		rsaMenu.add(selectPublicKeyMenuItem);
+		PublicKeyButtonActionListener pubList= new PublicKeyButtonActionListener();
+		selectPublicKeyMenuItem.addActionListener(pubList);
+		
+		//Select Private Key
+		JMenuItem selectPrivateKeyMenuItem= new JMenuItem("Select Private Key");
+		rsaMenu.add(selectPrivateKeyMenuItem);
+		PrivateKeyButtonActionListener privList= new PrivateKeyButtonActionListener();
+		selectPrivateKeyMenuItem.addActionListener(privList);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		//The text area
 		textArea= new JTextArea("");
 		JScrollPane scrollablePane= new JScrollPane(textArea);
@@ -227,7 +276,6 @@ public class SuperSecretSpyCoder extends JPanel{
 			publicName= new JLabel("Undeclared");
 		}
 		publicChooser= new JButton("Select Public Key");
-		PublicKeyButtonActionListener pubList= new PublicKeyButtonActionListener();
 		publicChooser.addActionListener(pubList);
 		publicBar.add(publicName);
 		publicBar.add(publicChooser);
@@ -247,7 +295,6 @@ public class SuperSecretSpyCoder extends JPanel{
 			privateName= new JLabel("Undeclared");
 		}
 		privateChooser= new JButton("Select Private Key");
-		PrivateKeyButtonActionListener privList= new PrivateKeyButtonActionListener();
 		privateChooser.addActionListener(privList);
 		privateBar.add(privateName);
 		privateBar.add(privateChooser);
@@ -259,13 +306,25 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		jf.setJMenuBar(menuBar);
 		
+		splashes= new ArrayList<String>();
 		
+		try{
+			splashesReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("Splashes.txt")));
+			helpReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("Help.txt")));
+			copyrightReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("Copyright.txt")));
+			
 		
-		
-		
-		
-		
-		
+			String line="";
+			
+			while ((line = splashesReader.readLine()) != null) {
+				splashes.add(line);
+			}
+			
+			splashSelector= (int) (Math.random()*splashes.size());
+		}
+		catch(Exception e){
+			
+		}
 		
 		add(sideBar, BorderLayout.LINE_START);
 		add(scrollablePane, BorderLayout.CENTER);
@@ -505,12 +564,16 @@ public class SuperSecretSpyCoder extends JPanel{
 		public void actionPerformed(ActionEvent arg0) {
 			
 			try{
-			Scanner reader= new Scanner(new File("Help.txt"));
 			
 			String text= "";
 			
-			while(reader.hasNext()){
-			text+=reader.nextLine();
+			String line="";
+			
+			text+=helpReader.readLine();
+			
+			while ((line = helpReader.readLine()) != null) {
+				text+="\n";
+				text+=line;
 			}
 			
 			JOptionPane.showMessageDialog(new JFrame(), text);
@@ -529,21 +592,74 @@ public class SuperSecretSpyCoder extends JPanel{
 		public void actionPerformed(ActionEvent arg0) {
 			
 			try{
-			Scanner reader= new Scanner(new File("Copyright.txt"));
 			
 			String text= "";
 			
-			text+=reader.nextLine();
+			String line="";
 			
-			while(reader.hasNext()){
+			text+=copyrightReader.readLine();
+			
+			while ((line = copyrightReader.readLine()) != null) {
 				text+="\n";
-				text+=reader.nextLine();
+				text+=line;
 			}
 			
 			JOptionPane.showMessageDialog(new JFrame(), text);
 			}
 			catch(Exception e){
 				
+			}
+			
+		}
+		
+	}
+	
+	private class GenerateListener implements ActionListener{
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			//Dialog prompting the user to input a unique name.
+			String codeName = JOptionPane.showInputDialog(new JFrame(), "Enter a secret codename.", "KeyMaker", JOptionPane.WARNING_MESSAGE);
+		
+			if(codeName!=null || !codeName.equals("")){
+		
+				String s="";
+	
+				for(int i=0; i<200; i++){
+					s+="355";
+				}
+	
+				BigInteger ss= new BigInteger(s);
+
+				BigInteger p;
+				BigInteger q;
+				BigInteger n;
+			
+				do{
+					p= new BigInteger((int)(3.32*300.0), 100, new Random()); //1 / 2^100 percent chance of being prime.
+					q= new BigInteger((int)(3.32*300.0), 100, new Random()); //Why is (int)(3.32*300.0) needed? I don't know. It's weird!
+					n= p.multiply(q);
+				}
+				while(n.toString().length()<599 || n.compareTo(ss)!=1);
+		
+				BigInteger phi_of_n= p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+				
+				//For some reason, e needs to be initlized to some value, even though it's going to be reset in the next few lines.
+				BigInteger e= new BigInteger("6");
+		
+				boolean goodExp=false;
+				while(goodExp==false){
+					e=new BigInteger(Integer.toString((int) (Math.random()*60000)));
+					if((e.gcd(phi_of_n)).equals(BigInteger.ONE)){
+						goodExp=true;
+					}
+				}
+			
+				BigInteger d=e.modInverse(phi_of_n);
+				
+				publicFile(e, n, codeName);
+				privateFile(d, n, codeName);
 			}
 			
 		}
@@ -581,6 +697,57 @@ public class SuperSecretSpyCoder extends JPanel{
 		}
 		
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//Making Public and Private keys
+	public static void publicFile(BigInteger e, BigInteger n, String codeName){
+		try{
+				FileWriter writer= new FileWriter(codeName+"-Public.txt");
+				writer.write(e.toString());
+				writer.write(System.getProperty("line.separator"));
+				writer.write(n.toString());
+				writer.close();
+		}
+		catch(Exception ex){
+				
+		}
+	}
+	
+	public static void privateFile(BigInteger d, BigInteger n, String codeName){
+		try{
+				FileWriter writer= new FileWriter(codeName+"-Private.txt");
+				writer.write(d.toString());
+				writer.write(System.getProperty("line.separator"));
+				writer.write(n.toString());
+				writer.close();
+		}
+		catch(Exception e){
+				
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
