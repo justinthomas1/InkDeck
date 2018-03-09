@@ -1,4 +1,12 @@
+    _____   ____ __ ____  ______________ __
+   /  _/ | / / //_// __ \/ ____/ ____/ //_/
+   / //  |/ / ,<  / / / / __/ / /   / ,<   
+ _/ // /|  / /| |/ /_/ / /___/ /___/ /| |  
+/___/_/ |_/_/ |_/_____/_____/\____/_/ |_|  
+                                           
+
 Created by Justin Thomas
+
 
 
 
@@ -34,3 +42,34 @@ SECTION 2: The sidebar
 Select Public Key - Opens a dialog box where the user can select a public key. Remember, this should be the key for the person you intend to send a message to.
 
 Select Private Key - Opens a dialog box where the user can select a private key. Remember, this should be your key.
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------
+Section 3: How to send messages
+-------------------------------------------------------------------------------------------
+
+1. First, you'll need someone else's public key. Have them send it to you via e-mail or another file sharing service. Send them yours, too!
+
+2. Using the "Select Public Key" and "Select Private Key", select the public key of the individual you'd like to send a message to and your own private key.
+
+3. Type out a message in InkDeck. Make it as long or short as you'd like.
+
+4. Click on the toolbar File>Encrypt to open a dialog box. This will ask where you'd like to save the encrypted file and what you'd like to name it.
+
+5. Send the message to your recipient of choice via e-mail or another file sharing service.
+
+6. When they send an encrypted text file back, open InkDeck.
+
+7. Click on the toolbar File>Decrypt to open a dialog box. This will ask what file you'd like to open. Select the text file you received.
+
+8. You should see the unencrypted contents of the file displayed in the text area.
+
+9. Continue for any messages you'd like to send.
+
+10. ???
+
+11. Profit.
