@@ -31,6 +31,13 @@ File
 -View splash screen - Displays the splash screen shown when the program is first opened.
 
 
+RSA
+
+-Generate New Keys - Generates a new Public and Private Key set based on a specified codename.
+
+-Select Public Key - Opens a dialog box where the user can select a public key. Remember, this should be the key for the person you intend to send a message to.
+-Select Private Key - Opens a dialog box where the user can select a private key. Remember, this should be your key.
+
 
 
 
@@ -52,9 +59,9 @@ Select Private Key - Opens a dialog box where the user can select a private key.
 Section 3: How to send messages
 -------------------------------------------------------------------------------------------
 
-1. First, you'll need someone else's public key. Have them send it to you via e-mail or another file sharing service. Send them yours, too!
+1. First, you'll need someone else's public key. Have them send it to you via e-mail or another file sharing service. Send them yours, too (use RSA>Generate New Keys if you don't have a public and private key already)!
 
-2. Using the "Select Public Key" and "Select Private Key", select the public key of the individual you'd like to send a message to and your own private key.
+2. Using the "Select Public Key" and "Select Private Key" buttons, select the public key of the individual you'd like to send a message to and your own private key.
 
 3. Type out a message in InkDeck. Make it as long or short as you'd like.
 
