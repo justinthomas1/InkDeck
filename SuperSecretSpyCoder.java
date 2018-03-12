@@ -47,15 +47,6 @@ public class SuperSecretSpyCoder extends JPanel{
 		private BufferedReader helpReader;
 		private BufferedReader copyrightReader;
 		
-		/*
-		
-		TODO:
-		-Add config file?
-		
-		*/
-		
-		
-		
 		
 		
 		
