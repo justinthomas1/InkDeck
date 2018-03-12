@@ -634,23 +634,40 @@ public class SuperSecretSpyCoder extends JPanel{
 				}
 				while(n.toString().length()<599 || n.compareTo(ss)!=1);
 		
-				BigInteger phi_of_n= p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+				phi_n= p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
 				
-				//For some reason, e needs to be initlized to some value, even though it's going to be reset in the next few lines.
-				BigInteger e= new BigInteger("6");
 		
 				boolean goodExp=false;
 				while(goodExp==false){
 					e=new BigInteger(Integer.toString((int) (Math.random()*60000)));
-					if((e.gcd(phi_of_n)).equals(BigInteger.ONE)){
+					if((e.gcd(phi_n)).equals(BigInteger.ONE)){
 						goodExp=true;
 					}
 				}
 			
-				BigInteger d=e.modInverse(phi_of_n);
+				d=e.modInverse(phi_n);
 				
 				publicFile(e, n, codeName);
 				privateFile(d, n, codeName);
+				
+				
+				//Set the private key to the newly generated one.
+				try{
+				
+				privateFile= new File(codeName+"-Private.txt");
+				
+				Scanner privateScan = new Scanner(privateFile);
+					
+				d=new BigInteger(privateScan.nextLine());
+				private_n=new BigInteger(privateScan.nextLine());
+					
+				privateName.setText(privateFile.getName());
+					
+				}
+				catch(Exception exc){
+					
+				}
+				
 			}
 			
 		}
@@ -697,12 +714,6 @@ public class SuperSecretSpyCoder extends JPanel{
 	
 	
 	
-	
-	
-	
-	
-	
-	
 	//Making Public and Private keys
 	public static void publicFile(BigInteger e, BigInteger n, String codeName){
 		try{
@@ -729,14 +740,6 @@ public class SuperSecretSpyCoder extends JPanel{
 				
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
