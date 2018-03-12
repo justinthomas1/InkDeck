@@ -48,26 +48,81 @@ public class SuperSecretSpyCoder extends JPanel{
 		private BufferedReader copyrightReader;
 		
 		
+		private static Properties properties;
+		private OutputStream output = null;
+		private static InputStream input = null;
+		
+		//Defaults for font
+		String fontName= "Serif";
+		int fontSize= 16;
+		
+		
 		
 		
 	public static void main(String[] args) throws Exception{
 		
+		properties = new Properties();
+		
 		try{
-		File config= new File("config");
+		File config= new File("config.properties");
 		
-		Scanner configScan= new Scanner(config);
+		if(config.exists()){
+			
 		
-		publicFile= new File(configScan.nextLine());
-		privateFile= new File(configScan.nextLine());
 		
-		Scanner publicScan = new Scanner(publicFile);
-		Scanner privateScan = new Scanner(privateFile);
+		input = new FileInputStream("config.properties");
+
+		// load a properties file
+		properties.load(input);
+
 		
-		e=new BigInteger(publicScan.nextLine());
-		public_n=new BigInteger(publicScan.nextLine());
+		try{
+			publicFile= new File(properties.getProperty("publicKey"));
+		}
+		catch(Exception exc){
+			
+		}
 		
-		d=new BigInteger(privateScan.nextLine());
-		private_n=new BigInteger(privateScan.nextLine());
+		if(publicFile.exists()){
+			Scanner publicScan = new Scanner(publicFile);
+			e=new BigInteger(publicScan.nextLine());
+			public_n=new BigInteger(publicScan.nextLine());
+		}
+		else{
+			publicFile=null;
+		}
+		
+			
+		
+		
+		
+		try{
+			privateFile= new File(properties.getProperty("privateKey"));
+		}
+		catch(Exception exc){
+			
+		}
+		
+		if(privateFile.exists()){
+			Scanner privateScan = new Scanner(privateFile);
+			d=new BigInteger(privateScan.nextLine());
+			private_n=new BigInteger(privateScan.nextLine());
+		}
+		else{
+			privateFile=null;
+		}
+		
+		
+		if (input != null) {
+			try {
+				input.close();
+			}
+			catch(Exception exc){
+				
+			}
+		}
+		
+		}
 		
 		}
 		catch(Exception e){
@@ -101,7 +156,7 @@ public class SuperSecretSpyCoder extends JPanel{
 	
 	public SuperSecretSpyCoder(){
 		try{			
-			Image image= new ImageIcon(getClass().getResource("Icon.png")).getImage();
+			Image image= new ImageIcon(getClass().getResource("/resources/Icon.png")).getImage();
 			jf.setIconImage(image);
 		}
 		catch(Exception e){
@@ -230,6 +285,35 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		
 		
+		//NEW MENU
+		JMenu viewMenu= new JMenu("View");
+		menuBar.add(viewMenu);
+		
+		//Select Public Key
+		JMenuItem selectFontMenuItem= new JMenuItem("Font");
+		viewMenu.add(selectFontMenuItem);
+		FontActionListener fontList= new FontActionListener();
+		selectFontMenuItem.addActionListener(fontList);
+		
+		//Select Private Key
+		JMenuItem selectFontSizeMenuItem= new JMenuItem("Font Size");
+		viewMenu.add(selectFontSizeMenuItem);
+		FontSizeActionListener fontSizeList= new FontSizeActionListener();
+		selectFontSizeMenuItem.addActionListener(fontSizeList);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		
@@ -300,9 +384,9 @@ public class SuperSecretSpyCoder extends JPanel{
 		splashes= new ArrayList<String>();
 		
 		try{
-			splashesReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("Splashes.txt")));
-			helpReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("Help.txt")));
-			copyrightReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("Copyright.txt")));
+			splashesReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/resources/Splashes.txt")));
+			helpReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/resources/Help.txt")));
+			copyrightReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/resources/Copyright.txt")));
 			
 		
 			String line="";
@@ -513,6 +597,8 @@ public class SuperSecretSpyCoder extends JPanel{
 					public_n=new BigInteger(publicScan.nextLine());
 					
 					publicName.setText(publicFile.getName());
+					
+					updateConfig();
 				}
 				catch(Exception e){
 				
@@ -540,6 +626,8 @@ public class SuperSecretSpyCoder extends JPanel{
 					private_n=new BigInteger(privateScan.nextLine());
 					
 					privateName.setText(privateFile.getName());
+					
+					updateConfig();
 				}
 				catch(Exception e){
 				
@@ -662,6 +750,8 @@ public class SuperSecretSpyCoder extends JPanel{
 				private_n=new BigInteger(privateScan.nextLine());
 					
 				privateName.setText(privateFile.getName());
+				
+				updateConfig();
 					
 				}
 				catch(Exception exc){
@@ -685,6 +775,24 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 	}
 	
+	private class FontActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			
+			
+		}
+	}
+	
+	private class FontSizeActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			
+			
+		}
+	}
+	
 	public void updateText(File file){	
 		
 		try{
@@ -706,7 +814,37 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 	}
 	
-	
+	public void updateConfig() throws Exception{
+		
+		output = new FileOutputStream("config.properties");
+
+		// set the properties value
+		if(privateFile!=null){
+			properties.setProperty("privateKey", privateFile.getAbsolutePath());
+		}
+		else{
+			properties.setProperty("privateKey", "null");
+		}
+		
+
+		if(publicFile!=null){
+			properties.setProperty("publicKey", publicFile.getAbsolutePath());
+		}
+		else{
+			properties.setProperty("publicKey", "null");
+		}
+		
+		
+		//properties.setProperty("prefFont", /*preferred font*/);
+		//properties.setProperty("prefFontSize", /*preferred font size*/);
+
+		// save properties to project root folder
+		properties.store(output, null);
+		
+		if (output != null) {
+				output.close();
+		}
+	}
 	
 	
 	
