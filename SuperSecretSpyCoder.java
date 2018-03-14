@@ -27,7 +27,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		private JPanel publicBar;
 		private JPanel privateBar;
 		private JLabel publicName;
-		private JLabel privateName;
+		private static JLabel privateName;
 		private JButton publicChooser;
 		private JButton privateChooser;
 		private JTextArea textArea;
@@ -49,33 +49,43 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		
 		private static Properties properties;
-		private OutputStream output = null;
+		private static OutputStream output = null;
 		private static InputStream input = null;
 		
 		//Defaults for font
-		String fontName= "Serif";
-		int fontSize= 16;
+		final private static String[] fontChoices= {"Serif", "Monospaced", "Dialog"};
+		private static int fontChoice= 0;
+		final private static String[] fontSizeChoices= {"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"};
+		private static int fontSizeChoice= 6;
 		
 		
 		
 		
 	public static void main(String[] args) throws Exception{
 		
+		jf= new JFrame();
+		spy= new SuperSecretSpyCoder();
+		jf.add(spy);
+		jf.pack();
+		jf.setSize(900,600);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.setTitle("InkDeck");
+		jf.setLocationRelativeTo(null);
+		jf.setVisible(true);
+		
 		properties = new Properties();
 		
-		try{
 		File config= new File("config.properties");
 		
 		if(config.exists()){
 			
-		
-		
 		input = new FileInputStream("config.properties");
 
 		// load a properties file
 		properties.load(input);
 
 		
+		//Try to find the public key based on the preferences
 		try{
 			publicFile= new File(properties.getProperty("publicKey"));
 		}
@@ -83,6 +93,7 @@ public class SuperSecretSpyCoder extends JPanel{
 			
 		}
 		
+		//If it exists, read in the public key contents
 		if(publicFile.exists()){
 			Scanner publicScan = new Scanner(publicFile);
 			e=new BigInteger(publicScan.nextLine());
@@ -95,7 +106,7 @@ public class SuperSecretSpyCoder extends JPanel{
 			
 		
 		
-		
+		//Try to find the private key based on the preferences
 		try{
 			privateFile= new File(properties.getProperty("privateKey"));
 		}
@@ -103,6 +114,8 @@ public class SuperSecretSpyCoder extends JPanel{
 			
 		}
 		
+		
+		//If it exists, read in the private key contents
 		if(privateFile.exists()){
 			Scanner privateScan = new Scanner(privateFile);
 			d=new BigInteger(privateScan.nextLine());
@@ -110,6 +123,24 @@ public class SuperSecretSpyCoder extends JPanel{
 		}
 		else{
 			privateFile=null;
+		}
+		
+		
+		//Try to find the font based on the preferences
+		try{
+			fontChoice= Integer.parseInt(properties.getProperty("font"));
+		}
+		catch(Exception exc){
+			
+		}
+		
+		
+		//Try to find the font size based on the preferences
+		try{
+			fontSizeChoice= Integer.parseInt(properties.getProperty("fontSize"));
+		}
+		catch(Exception exc){
+			
 		}
 		
 		
@@ -123,22 +154,14 @@ public class SuperSecretSpyCoder extends JPanel{
 		}
 		
 		}
-		
+		else{
+			try{
+			createKeys();
+			}
+			catch(Exception ex){
+				
+			}
 		}
-		catch(Exception e){
-
-		}
-		
-		
-		jf= new JFrame();
-		spy= new SuperSecretSpyCoder();
-		jf.add(spy);
-		jf.pack();
-		jf.setSize(900,600);
-		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jf.setTitle("InkDeck");
-		jf.setLocationRelativeTo(null);
-		jf.setVisible(true);
 		
 		
 		if(!splashes.isEmpty()){
@@ -322,7 +345,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		//The text area
 		textArea= new JTextArea("");
 		JScrollPane scrollablePane= new JScrollPane(textArea);
-		textArea.setFont(new Font("Serif", Font.PLAIN, 16));
+		textArea.setFont(new Font(fontChoices[fontChoice], Font.PLAIN, Integer.parseInt(fontSizeChoices[fontSizeChoice])));
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
 		
@@ -697,8 +720,144 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			try{
+			createKeys();
+			}
+			catch(Exception ex){
+				
+			}
+		}
+		
+	}
+	
+	private class SplashScreenListener implements ActionListener{
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
 			
-			//Dialog prompting the user to input a unique name.
+			JOptionPane.showMessageDialog(new JFrame(),("Splash Message #" + (splashSelector+1) + "\n" + splashes.get(splashSelector)));
+			
+		}
+		
+	}
+	
+	private class FontActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			String result = (String) JOptionPane.showInputDialog(null, "Choose a font.", "Choose Font", JOptionPane.QUESTION_MESSAGE, null, fontChoices, fontChoices[fontChoice]);
+			
+			int i;
+			
+			for(i=0; i<fontChoices.length; i++){
+				if(fontChoices[i].equals(result)){
+					break;
+				}
+			}
+			
+			fontChoice=i;
+			
+			
+			textArea.setFont(new Font(fontChoices[fontChoice], Font.PLAIN, Integer.parseInt(fontSizeChoices[fontSizeChoice])));
+			
+			try{
+			updateConfig();
+			}
+			catch(Exception ex){
+				
+			}
+			
+		}
+	}
+	
+	private class FontSizeActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			String result = (String) JOptionPane.showInputDialog(null, "Choose a font size.", "Choose Font Size", JOptionPane.QUESTION_MESSAGE, null, fontSizeChoices, fontSizeChoices[fontSizeChoice]);
+			
+			int i;
+			
+			for(i=0; i<fontSizeChoices.length; i++){
+				if(fontSizeChoices[i].equals(result)){
+					break;
+				}
+			}
+			
+			fontSizeChoice=i;
+			
+			
+			textArea.setFont(new Font(fontChoices[fontChoice], Font.PLAIN, Integer.parseInt(fontSizeChoices[fontSizeChoice])));
+			
+			try{
+			updateConfig();
+			}
+			catch(Exception ex){
+				
+			}
+		}
+	}
+	
+	public void updateText(File file){	
+		
+		try{
+			
+		String output="";
+		Scanner in = new Scanner(file);
+		
+		while(in.hasNext()){
+			output+=in.nextLine();
+			output+="\n";
+		}
+		
+		textArea.setText(output);
+		
+		}
+		catch(Exception e){
+			
+		}
+		
+	}
+	
+	public static void updateConfig() throws Exception{
+		
+		output = new FileOutputStream("config.properties");
+
+		// set the properties value
+		if(privateFile!=null){
+			properties.setProperty("privateKey", privateFile.getAbsolutePath());
+		}
+		else{
+			properties.setProperty("privateKey", "null");
+		}
+		
+
+		if(publicFile!=null){
+			properties.setProperty("publicKey", publicFile.getAbsolutePath());
+		}
+		else{
+			properties.setProperty("publicKey", "null");
+		}
+		
+		properties.setProperty("font", Integer.toString(fontChoice));
+		
+		properties.setProperty("fontSize", Integer.toString(fontSizeChoice));
+		
+		
+		//properties.setProperty("prefFont", /*preferred font*/);
+		//properties.setProperty("prefFontSize", /*preferred font size*/);
+
+		// save properties to project root folder
+		properties.store(output, null);
+		
+		if (output != null) {
+				output.close();
+		}
+	}
+	
+	public static void createKeys() throws Exception{
+		
+		//Dialog prompting the user to input a unique name.
 			String codeName = JOptionPane.showInputDialog(new JFrame(), "Enter a secret codename.", "KeyMaker", JOptionPane.WARNING_MESSAGE);
 		
 			if(codeName!=null || !codeName.equals("")){
@@ -759,94 +918,8 @@ public class SuperSecretSpyCoder extends JPanel{
 				}
 				
 			}
-			
-		}
 		
 	}
-	
-	private class SplashScreenListener implements ActionListener{
-		
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			
-			JOptionPane.showMessageDialog(new JFrame(),("Splash Message #" + (splashSelector+1) + "\n" + splashes.get(splashSelector)));
-			
-		}
-		
-	}
-	
-	private class FontActionListener implements ActionListener{
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			
-			
-			
-		}
-	}
-	
-	private class FontSizeActionListener implements ActionListener{
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			
-			
-			
-		}
-	}
-	
-	public void updateText(File file){	
-		
-		try{
-			
-		String output="";
-		Scanner in = new Scanner(file);
-		
-		while(in.hasNext()){
-			output+=in.nextLine();
-			output+="\n";
-		}
-		
-		textArea.setText(output);
-		
-		}
-		catch(Exception e){
-			
-		}
-		
-	}
-	
-	public void updateConfig() throws Exception{
-		
-		output = new FileOutputStream("config.properties");
-
-		// set the properties value
-		if(privateFile!=null){
-			properties.setProperty("privateKey", privateFile.getAbsolutePath());
-		}
-		else{
-			properties.setProperty("privateKey", "null");
-		}
-		
-
-		if(publicFile!=null){
-			properties.setProperty("publicKey", publicFile.getAbsolutePath());
-		}
-		else{
-			properties.setProperty("publicKey", "null");
-		}
-		
-		
-		//properties.setProperty("prefFont", /*preferred font*/);
-		//properties.setProperty("prefFontSize", /*preferred font size*/);
-
-		// save properties to project root folder
-		properties.store(output, null);
-		
-		if (output != null) {
-				output.close();
-		}
-	}
-	
-	
 	
 	
 	
