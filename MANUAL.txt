@@ -59,7 +59,7 @@ Select Private Key - Opens a dialog box where the user can select a private key.
 Section 3: How to send messages
 -------------------------------------------------------------------------------------------
 
-1. First, you'll need someone else's public key. Have them send it to you via e-mail or another file sharing service. Send them yours, too (use RSA>Generate New Keys if you don't have a public and private key already)!
+1. First, you'll need someone else's public key. Have them send it to you via e-mail or another file sharing service. Send them yours, too! (use RSA>Generate New Keys if you don't have a public and private key already.)
 
 2. Using the "Select Public Key" and "Select Private Key" buttons, select the public key of the individual you'd like to send a message to and your own private key.
 
