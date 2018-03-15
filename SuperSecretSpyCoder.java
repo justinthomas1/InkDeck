@@ -747,6 +747,7 @@ public class SuperSecretSpyCoder extends JPanel{
 			
 			String result = (String) JOptionPane.showInputDialog(null, "Choose a font.", "Choose Font", JOptionPane.QUESTION_MESSAGE, null, fontChoices, fontChoices[fontChoice]);
 			
+			if(result!=null){
 			int i;
 			
 			for(i=0; i<fontChoices.length; i++){
@@ -766,7 +767,7 @@ public class SuperSecretSpyCoder extends JPanel{
 			catch(Exception ex){
 				
 			}
-			
+			}
 		}
 	}
 	
@@ -776,6 +777,7 @@ public class SuperSecretSpyCoder extends JPanel{
 			
 			String result = (String) JOptionPane.showInputDialog(null, "Choose a font size.", "Choose Font Size", JOptionPane.QUESTION_MESSAGE, null, fontSizeChoices, fontSizeChoices[fontSizeChoice]);
 			
+			if(result!=null){
 			int i;
 			
 			for(i=0; i<fontSizeChoices.length; i++){
@@ -794,6 +796,7 @@ public class SuperSecretSpyCoder extends JPanel{
 			}
 			catch(Exception ex){
 				
+			}
 			}
 		}
 	}
