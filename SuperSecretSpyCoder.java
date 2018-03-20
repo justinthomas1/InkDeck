@@ -53,31 +53,26 @@ public class SuperSecretSpyCoder extends JPanel{
 		private static InputStream input = null;
 		
 		//Defaults for font
-		final private static String[] fontChoices= {"Serif", "Monospaced", "Dialog"};
+		final private static String[] fontChoices= {"Serif", "Monospaced", "Dialog", "Comic Sans MS"};
 		private static int fontChoice= 0;
 		final private static String[] fontSizeChoices= {"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"};
 		private static int fontSizeChoice= 6;
 		
+		private static boolean hasAConfig=false; //Only used so the popup will appear once the software has already started.
 		
 		
 		
 	public static void main(String[] args) throws Exception{
 		
 		jf= new JFrame();
-		spy= new SuperSecretSpyCoder();
-		jf.add(spy);
-		jf.pack();
-		jf.setSize(900,600);
-		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jf.setTitle("InkDeck");
-		jf.setLocationRelativeTo(null);
-		jf.setVisible(true);
 		
 		properties = new Properties();
 		
 		File config= new File("config.properties");
 		
 		if(config.exists()){
+			
+		hasAConfig=true;
 			
 		input = new FileInputStream("config.properties");
 
@@ -155,6 +150,27 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		}
 		else{
+			hasAConfig=false;
+		}
+		
+		
+		
+		
+		//Make the actual GUI happen.
+		
+		spy= new SuperSecretSpyCoder();
+		jf.add(spy);
+		jf.pack();
+		jf.setSize(900,600);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.setTitle("InkDeck");
+		jf.setLocationRelativeTo(null);
+		jf.setVisible(true);
+		
+		
+		//The popup that prompts the user for a codename.
+		
+		if(!hasAConfig){
 			try{
 			createKeys();
 			}
@@ -162,6 +178,9 @@ public class SuperSecretSpyCoder extends JPanel{
 				
 			}
 		}
+		
+		
+		//Splashy message!
 		
 		
 		if(!splashes.isEmpty()){
