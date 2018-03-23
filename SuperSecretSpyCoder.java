@@ -61,6 +61,8 @@ public class SuperSecretSpyCoder extends JPanel{
 		private static boolean hasAConfig=false; //Only used so the popup will appear once the software has already started.
 		
 		
+		private static String codename;
+		
 		
 	public static void main(String[] args) throws Exception{
 		
@@ -142,6 +144,15 @@ public class SuperSecretSpyCoder extends JPanel{
 		catch(Exception exc){
 			
 		}
+		
+		//Try to set the codename
+		try{
+			codename= properties.getProperty("codename");
+		}
+		catch(Exception exc){
+			
+		}
+		
 		
 		
 		if (input != null) {
@@ -886,13 +897,13 @@ public class SuperSecretSpyCoder extends JPanel{
 		}
 		
 		properties.setProperty("font", Integer.toString(fontChoice));
-		
 		properties.setProperty("fontSize", Integer.toString(fontSizeChoice));
 		
 		
-		//properties.setProperty("prefFont", /*preferred font*/);
-		//properties.setProperty("prefFontSize", /*preferred font size*/);
-
+		properties.setProperty("codename", codename);
+		
+		
+		
 		// save properties to project root folder
 		properties.store(output, null);
 		
@@ -903,10 +914,26 @@ public class SuperSecretSpyCoder extends JPanel{
 	
 	public static void createKeys() throws Exception{
 		
-		//Dialog prompting the user to input a unique name.
-			String codeName = JOptionPane.showInputDialog(new JFrame(), "Enter a secret codename.", "KeyMaker", JOptionPane.WARNING_MESSAGE);
-		
-			if(codeName!=null || !codeName.equals("")){
+			//Asks the user if they want to overwrite their previous codename (if it exists).
+			int chosen=0;
+			
+			if(codename!=null){
+				chosen= JOptionPane.showConfirmDialog(new JFrame(), "Overwrite previous codename?");
+			}
+			else{
+				chosen=JOptionPane.YES_OPTION;
+			}
+			
+			//Dialog prompting the user to input a unique name.
+			if(chosen==JOptionPane.YES_OPTION){	
+			codename = JOptionPane.showInputDialog(new JFrame(), "Enter a secret codename.", "KeyMaker", JOptionPane.WARNING_MESSAGE);
+			}
+			
+			if(chosen==JOptionPane.YES_OPTION || chosen==JOptionPane.NO_OPTION){
+			if(codename==null){
+				
+			}
+			else if(!codename.equals("")){
 		
 				String s="";
 	
@@ -940,14 +967,14 @@ public class SuperSecretSpyCoder extends JPanel{
 			
 				d=e.modInverse(phi_n);
 				
-				publicFile(e, n, codeName);
-				privateFile(d, n, codeName);
+				publicFile(e, n, codename);
+				privateFile(d, n, codename);
 				
 				
 				//Set the private key to the newly generated one.
 				try{
 				
-				privateFile= new File(codeName+"-Private.txt");
+				privateFile= new File(codename+"-Private.txt");
 				
 				Scanner privateScan = new Scanner(privateFile);
 					
@@ -964,7 +991,12 @@ public class SuperSecretSpyCoder extends JPanel{
 				}
 				
 			}
-		
+			else if(codename.equals("")){
+				JOptionPane.showMessageDialog(new JFrame(), "Please enter a valid codename.");
+				codename=null;
+				createKeys();
+			}
+			}
 	}
 	
 	
@@ -972,9 +1004,9 @@ public class SuperSecretSpyCoder extends JPanel{
 	
 	
 	//Making Public and Private keys
-	public static void publicFile(BigInteger e, BigInteger n, String codeName){
+	public static void publicFile(BigInteger e, BigInteger n, String codename){
 		try{
-				FileWriter writer= new FileWriter(codeName+"-Public.txt");
+				FileWriter writer= new FileWriter(codename+"-Public.txt");
 				writer.write(e.toString());
 				writer.write(System.getProperty("line.separator"));
 				writer.write(n.toString());
@@ -985,9 +1017,9 @@ public class SuperSecretSpyCoder extends JPanel{
 		}
 	}
 	
-	public static void privateFile(BigInteger d, BigInteger n, String codeName){
+	public static void privateFile(BigInteger d, BigInteger n, String codename){
 		try{
-				FileWriter writer= new FileWriter(codeName+"-Private.txt");
+				FileWriter writer= new FileWriter(codename+"-Private.txt");
 				writer.write(d.toString());
 				writer.write(System.getProperty("line.separator"));
 				writer.write(n.toString());
