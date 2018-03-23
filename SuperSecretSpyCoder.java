@@ -166,6 +166,17 @@ public class SuperSecretSpyCoder extends JPanel{
 		}
 		
 		
+		File keyDir= new File("Keys");
+		
+		if (!keyDir.exists()) {
+			try{
+			keyDir.mkdir();
+			} 
+			catch(Exception ex){
+			
+			}        
+		}
+		
 		
 		//Make the actual GUI happen.
 		
@@ -316,13 +327,13 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		
 		//Select Public Key
-		JMenuItem selectPublicKeyMenuItem= new JMenuItem("Select Public Key");
+		JMenuItem selectPublicKeyMenuItem= new JMenuItem("Select Recipient's Public Key");
 		rsaMenu.add(selectPublicKeyMenuItem);
 		PublicKeyButtonActionListener pubList= new PublicKeyButtonActionListener();
 		selectPublicKeyMenuItem.addActionListener(pubList);
 		
 		//Select Private Key
-		JMenuItem selectPrivateKeyMenuItem= new JMenuItem("Select Private Key");
+		JMenuItem selectPrivateKeyMenuItem= new JMenuItem("Select Your Private Key");
 		rsaMenu.add(selectPrivateKeyMenuItem);
 		PrivateKeyButtonActionListener privList= new PrivateKeyButtonActionListener();
 		selectPrivateKeyMenuItem.addActionListener(privList);
@@ -403,7 +414,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		else{
 			publicName= new JLabel("Undeclared");
 		}
-		publicChooser= new JButton("Select Public Key");
+		publicChooser= new JButton("Select Recipient's Public Key");
 		publicChooser.addActionListener(pubList);
 		publicBar.add(publicName);
 		publicBar.add(publicChooser);
@@ -422,7 +433,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		else{
 			privateName= new JLabel("Undeclared");
 		}
-		privateChooser= new JButton("Select Private Key");
+		privateChooser= new JButton("Select Your Private Key");
 		privateChooser.addActionListener(privList);
 		privateBar.add(privateName);
 		privateBar.add(privateChooser);
@@ -504,6 +515,8 @@ public class SuperSecretSpyCoder extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			
+			JOptionPane.showMessageDialog(new JFrame(),("Warning: Don't ever send a plaintext message!"));
+
 			jfc.setSelectedFile(null);
 			int result= jfc.showSaveDialog(SuperSecretSpyCoder.this);
 			
