@@ -48,7 +48,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		private static InputStream input = null;
 		
 		//Defaults for font
-		private static String[] fontChoices;
+		final private static String[] fontChoices= {"Serif", "Monospaced", "Dialog"};
 		private static int fontChoice= 0;
 		final private static String[] fontSizeChoices= {"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"};
 		private static int fontSizeChoice= 6;
@@ -63,10 +63,6 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		jf= new JFrame();
 		
-		
-		//Getting all fonts in the system and storing them in the fontChoices array.
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		fontChoices = env.getAvailableFontFamilyNames();
 		
 		properties = new Properties();
 		
@@ -164,13 +160,6 @@ public class SuperSecretSpyCoder extends JPanel{
 		}
 		else{
 			hasAConfig=false;
-			
-			for(int i=0; i<fontChoices.length; i++){
-				if(fontChoices[i].equals("Times New Roman")){
-					fontChoice=i;
-					break;
-				}
-			}
 		}
 		
 		
