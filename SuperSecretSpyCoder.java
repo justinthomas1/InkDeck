@@ -24,12 +24,8 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		//Just GUI stuff
 		private JPanel sideBar;
-		private JPanel publicBar;
-		private JPanel privateBar;
 		private JLabel publicName;
-		private static JLabel privateName;
 		private JButton publicChooser;
-		private JButton privateChooser;
 		private JTextArea textArea;
 		
 		private static SuperSecretSpyCoder spy;
@@ -37,7 +33,6 @@ public class SuperSecretSpyCoder extends JPanel{
 		private static JFrame jf;
 		
 		private static File publicFile;
-		private static File privateFile;
 		
 		
 		private static ArrayList<String> splashes;
@@ -53,7 +48,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		private static InputStream input = null;
 		
 		//Defaults for font
-		private static String[] fontChoices;
+		final private static String[] fontChoices= {"Serif", "Monospaced", "Dialog"};
 		private static int fontChoice= 0;
 		final private static String[] fontSizeChoices= {"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"};
 		private static int fontSizeChoice= 6;
@@ -68,10 +63,6 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		jf= new JFrame();
 		
-		
-		//Getting all fonts in the system and storing them in the fontChoices array.
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		fontChoices = env.getAvailableFontFamilyNames();
 		
 		properties = new Properties();
 		
@@ -108,26 +99,6 @@ public class SuperSecretSpyCoder extends JPanel{
 			
 		
 		
-		//Try to find the private key based on the preferences
-		try{
-			privateFile= new File(properties.getProperty("privateKey"));
-		}
-		catch(Exception exc){
-			
-		}
-		
-		
-		//If it exists, read in the private key contents
-		if(privateFile.exists()){
-			Scanner privateScan = new Scanner(privateFile);
-			d=new BigInteger(privateScan.nextLine());
-			private_n=new BigInteger(privateScan.nextLine());
-		}
-		else{
-			privateFile=null;
-		}
-		
-		
 		//Try to find the font based on the preferences
 		try{
 			fontChoice= Integer.parseInt(properties.getProperty("font"));
@@ -155,6 +126,28 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		
 		
+		
+		
+		//Try to set the d value
+		try{
+			d= new BigInteger(properties.getProperty("d"));
+		}
+		catch(Exception exc){
+			
+		}
+		
+		
+		
+		//Try to set the private n value
+		try{
+			private_n= new BigInteger(properties.getProperty("private_n"));
+		}
+		catch(Exception exc){
+			
+		}
+		
+		
+		
 		if (input != null) {
 			try {
 				input.close();
@@ -167,13 +160,6 @@ public class SuperSecretSpyCoder extends JPanel{
 		}
 		else{
 			hasAConfig=false;
-			
-			for(int i=0; i<fontChoices.length; i++){
-				if(fontChoices[i].equals("Times New Roman")){
-					fontChoice=i;
-					break;
-				}
-			}
 		}
 		
 		
@@ -343,12 +329,6 @@ public class SuperSecretSpyCoder extends JPanel{
 		PublicKeyButtonActionListener pubList= new PublicKeyButtonActionListener();
 		selectPublicKeyMenuItem.addActionListener(pubList);
 		
-		//Select Private Key
-		JMenuItem selectPrivateKeyMenuItem= new JMenuItem("Select Your Private Key");
-		rsaMenu.add(selectPrivateKeyMenuItem);
-		PrivateKeyButtonActionListener privList= new PrivateKeyButtonActionListener();
-		selectPrivateKeyMenuItem.addActionListener(privList);
-		
 		
 		
 		
@@ -364,13 +344,13 @@ public class SuperSecretSpyCoder extends JPanel{
 		JMenu viewMenu= new JMenu("View");
 		menuBar.add(viewMenu);
 		
-		//Select Public Key
+		//Select Font
 		JMenuItem selectFontMenuItem= new JMenuItem("Font");
 		viewMenu.add(selectFontMenuItem);
 		FontActionListener fontList= new FontActionListener();
 		selectFontMenuItem.addActionListener(fontList);
 		
-		//Select Private Key
+		//Select Font Size
 		JMenuItem selectFontSizeMenuItem= new JMenuItem("Font Size");
 		viewMenu.add(selectFontSizeMenuItem);
 		FontSizeActionListener fontSizeList= new FontSizeActionListener();
@@ -410,51 +390,36 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		//Constructing the sidebar
 		sideBar= new JPanel();
-		sideBar.setLayout(new GridLayout(5,0));
+		sideBar.setLayout(new GridLayout(4,0));
 		
 		//Adding a filler
 		sideBar.add(new JLabel(""));
 		
-		//Adding the public section
-		publicBar= new JPanel();
-		publicBar.setLayout(new GridLayout(2,0));
-		
+		//Adding the public stuff
 		if(publicFile!=null){
-			publicName= new JLabel(publicFile.getName());
+			publicName= new JLabel("Recipient: " + publicFile.getName().replace("-Public.txt", ""));
 		}
 		else{
 			publicName= new JLabel("Undeclared");
 		}
+		
+		sideBar.add(publicName);
+		
 		publicChooser= new JButton("Select Recipient's Public Key");
 		publicChooser.addActionListener(pubList);
-		publicBar.add(publicName);
-		publicBar.add(publicChooser);
-		
-		sideBar.add(publicBar);
-		
-		//Adding a filler
-		sideBar.add(new JLabel(""));
-		
-		//Adding the private section
-		privateBar= new JPanel();
-		privateBar.setLayout(new GridLayout(2,0));
-		if(privateFile!=null){
-			privateName= new JLabel(privateFile.getName());
-		}
-		else{
-			privateName= new JLabel("Undeclared");
-		}
-		privateChooser= new JButton("Select Your Private Key");
-		privateChooser.addActionListener(privList);
-		privateBar.add(privateName);
-		privateBar.add(privateChooser);
-		
-		sideBar.add(privateBar);
+
+		sideBar.add(publicChooser);
 		
 		//One more filler!
 		sideBar.add(new JLabel(""));
 		
+		
 		jf.setJMenuBar(menuBar);
+		
+		
+		
+		
+		
 		
 		splashes= new ArrayList<String>();
 		
@@ -617,7 +582,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			if(privateFile!=null){
+			if(private_n!=null){
 				//open filechooser here.
 				jfc.setSelectedFile(null);
 				int result= jfc.showOpenDialog(SuperSecretSpyCoder.this);
@@ -673,36 +638,7 @@ public class SuperSecretSpyCoder extends JPanel{
 					e=new BigInteger(publicScan.nextLine());
 					public_n=new BigInteger(publicScan.nextLine());
 					
-					publicName.setText(publicFile.getName());
-					
-					updateConfig();
-				}
-				catch(Exception e){
-				
-				}
-			}
-		}
-
-	}
-	
-	private class PrivateKeyButtonActionListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			//open filechooser here.
-			jfc.setSelectedFile(null);
-			int result= jfc.showOpenDialog(SuperSecretSpyCoder.this);
-			
-			if(result == JFileChooser.APPROVE_OPTION){
-				try{
-					privateFile= jfc.getSelectedFile();
-					
-					Scanner privateScan = new Scanner(privateFile);
-					
-					d=new BigInteger(privateScan.nextLine());
-					private_n=new BigInteger(privateScan.nextLine());
-					
-					privateName.setText(privateFile.getName());
+					publicName.setText("Recipient: " + publicFile.getName().replace("-Public.txt", ""));
 					
 					updateConfig();
 				}
@@ -879,14 +815,6 @@ public class SuperSecretSpyCoder extends JPanel{
 	public static void updateConfig() throws Exception{
 		
 		output = new FileOutputStream("config.properties");
-
-		// set the properties value
-		if(privateFile!=null){
-			properties.setProperty("privateKey", privateFile.getAbsolutePath());
-		}
-		else{
-			properties.setProperty("privateKey", "null");
-		}
 		
 
 		if(publicFile!=null){
@@ -901,6 +829,31 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		
 		properties.setProperty("codename", codename);
+		
+		
+		
+		
+		// set the d value
+		if(d!=null){
+			properties.setProperty("d", d.toString());
+		}
+		else{
+			properties.setProperty("d", "null");
+		}
+		
+		
+		// set the private n value
+		if(private_n!=null){
+			properties.setProperty("private_n", private_n.toString());
+		}
+		else{
+			properties.setProperty("private_n", "null");
+		}
+		
+		
+		
+		
+		
 		
 		
 		
@@ -968,28 +921,13 @@ public class SuperSecretSpyCoder extends JPanel{
 				d=e.modInverse(phi_n);
 				
 				publicFile(e, n, codename);
-				privateFile(d, n, codename);
 				
-				
-				//Set the private key to the newly generated one.
-				try{
-				
-				privateFile= new File(codename+"-Private.txt");
-				
-				Scanner privateScan = new Scanner(privateFile);
-					
-				d=new BigInteger(privateScan.nextLine());
-				private_n=new BigInteger(privateScan.nextLine());
-					
-				privateName.setText(privateFile.getName());
+				private_n=n;
 				
 				updateConfig();
-					
-				}
-				catch(Exception exc){
-					
-				}
 				
+				JOptionPane.showMessageDialog(new JFrame(), "All done! You can access your public key from the \"Keys\" folder.");
+
 			}
 			else if(codename.equals("")){
 				JOptionPane.showMessageDialog(new JFrame(), "Please enter a valid codename.");
@@ -1003,29 +941,16 @@ public class SuperSecretSpyCoder extends JPanel{
 	
 	
 	
-	//Making Public and Private keys
+	//Making the Public Key file
 	public static void publicFile(BigInteger e, BigInteger n, String codename){
 		try{
-				FileWriter writer= new FileWriter(codename+"-Public.txt");
+				FileWriter writer= new FileWriter(".\\Keys\\" + codename + "-Public.txt");
 				writer.write(e.toString());
 				writer.write(System.getProperty("line.separator"));
 				writer.write(n.toString());
 				writer.close();
 		}
 		catch(Exception ex){
-				
-		}
-	}
-	
-	public static void privateFile(BigInteger d, BigInteger n, String codename){
-		try{
-				FileWriter writer= new FileWriter(codename+"-Private.txt");
-				writer.write(d.toString());
-				writer.write(System.getProperty("line.separator"));
-				writer.write(n.toString());
-				writer.close();
-		}
-		catch(Exception e){
 				
 		}
 	}
@@ -1117,6 +1042,11 @@ public class SuperSecretSpyCoder extends JPanel{
 			}
 			toReturn.add(add);
 		}
+		
+		/* for(int i=0; i<toReturn.size(); i++){
+			System.out.println(toReturn.get(i));
+		} */
+		
 		return toReturn;
 	}
 	
