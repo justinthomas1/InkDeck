@@ -896,6 +896,21 @@ public class SuperSecretSpyCoder extends JPanel{
 			if(codename==null){
 				
 			}
+			else if(codename.contains("\\") || codename.contains("/") || codename.contains(":") || codename.contains("*") || codename.contains("?") || codename.contains("\"") || codename.contains("<") || codename.contains(">") || codename.contains("|")){
+				JOptionPane.showMessageDialog(new JFrame(), "Your codename cannot contain any of the following characters: \\ / : * ? \" < > |");
+				codename=null;
+				createKeys();
+			}
+			else if(codename.equals("")){
+				JOptionPane.showMessageDialog(new JFrame(), "Please enter a valid codename.");
+				codename=null;
+				createKeys();
+			}
+			else if(codename.length() > 119){
+				JOptionPane.showMessageDialog(new JFrame(), "Your codename must be less than 119 characters in length.");
+				codename=null;
+				createKeys();
+			}
 			else if(!codename.equals("")){
 		
 				String s="";
@@ -938,12 +953,7 @@ public class SuperSecretSpyCoder extends JPanel{
 				
 				JOptionPane.showMessageDialog(new JFrame(), "All done! You can access your public key from the \"Keys\" folder.");
 
-			}
-			else if(codename.equals("")){
-				JOptionPane.showMessageDialog(new JFrame(), "Please enter a valid codename.");
-				codename=null;
-				createKeys();
-			}
+			}			
 			}
 	}
 	
