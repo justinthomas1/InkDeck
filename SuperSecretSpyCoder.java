@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.nio.file.*;
+
 public class SuperSecretSpyCoder extends JPanel{
 
 		private static BigInteger public_n;
@@ -25,7 +27,8 @@ public class SuperSecretSpyCoder extends JPanel{
 		//Just GUI stuff
 		private JPanel sideBar;
 		private JLabel publicName;
-		private JButton publicChooser;
+		private JButton recipChooser;
+		private JButton addPubKey;
 		private JTextArea textArea;
 		
 		private static SuperSecretSpyCoder spy;
@@ -52,6 +55,8 @@ public class SuperSecretSpyCoder extends JPanel{
 		private static int fontChoice= 0;
 		final private static String[] fontSizeChoices= {"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"};
 		private static int fontSizeChoice= 6;
+		final private static String[] appearanceChoices= {"Default","System"};
+		private static int appearanceChoice=0;
 		
 		private static int keyChoice= 0;
 		
@@ -126,6 +131,16 @@ public class SuperSecretSpyCoder extends JPanel{
 		catch(Exception exc){
 			
 		}
+		
+		//Try to find the appearance choice based on the preferences
+		try{
+			appearanceChoice= Integer.parseInt(properties.getProperty("appearanceChoice"));
+		}
+		catch(Exception exc){
+			
+		}
+		
+		
 		
 		//Try to set the codename
 		try{
@@ -243,6 +258,26 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		jfc= new JFileChooser();
 		
+		
+		if(appearanceChoice==0){
+			try{
+				UIManager.setLookAndFeel("javax.swing.defaultlaf");
+			}
+			catch(Exception exc){
+					
+			}
+		}
+		else{
+			try{
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());	
+			}
+			catch(Exception exc){
+			
+			}
+		}
+		
+		
+		
 		//Constructing the menubar
 		JMenuBar menuBar= new JMenuBar();
 		JMenu fileMenu= new JMenu("File");
@@ -341,8 +376,14 @@ public class SuperSecretSpyCoder extends JPanel{
 		//Select Public Key
 		JMenuItem selectPublicKeyMenuItem= new JMenuItem("Select Recipient");
 		rsaMenu.add(selectPublicKeyMenuItem);
-		PublicKeyButtonActionListener pubList= new PublicKeyButtonActionListener();
-		selectPublicKeyMenuItem.addActionListener(pubList);
+		ChooseRecipientActionListener chooseRecipList= new ChooseRecipientActionListener();
+		selectPublicKeyMenuItem.addActionListener(chooseRecipList);
+		
+		//Add New Key
+		JMenuItem selectNewKeyItem= new JMenuItem("Add Recipient's Key");
+		rsaMenu.add(selectNewKeyItem);
+		AddPublicKeyActionListener addPubList= new AddPublicKeyActionListener();
+		selectNewKeyItem.addActionListener(addPubList);
 		
 		
 		
@@ -372,10 +413,17 @@ public class SuperSecretSpyCoder extends JPanel{
 		selectFontSizeMenuItem.addActionListener(fontSizeList);
 		
 		
+		//------------------------------------------------------------------------------------------------------
+		//Separator
+		viewMenu.addSeparator();
+		//------------------------------------------------------------------------------------------------------
 		
 		
-		
-		
+		//Select Look and Feel
+		JMenuItem selectLookAndFeel= new JMenuItem("Change Appearance");
+		viewMenu.add(selectLookAndFeel);
+		LookAndFeelActionListener lookAndFeelList= new LookAndFeelActionListener();
+		selectLookAndFeel.addActionListener(lookAndFeelList);
 		
 		
 		
@@ -405,7 +453,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		//Constructing the sidebar
 		sideBar= new JPanel();
-		sideBar.setLayout(new GridLayout(4,0));
+		sideBar.setLayout(new GridLayout(5,0));
 		
 		//Adding a filler
 		sideBar.add(new JLabel(""));
@@ -420,10 +468,17 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		sideBar.add(publicName);
 		
-		publicChooser= new JButton("Select Recipient");
-		publicChooser.addActionListener(pubList);
+		//Adding the button that opens a dropdown to select a recipient
+		recipChooser= new JButton("Select Recipient");
+		recipChooser.addActionListener(chooseRecipList);
 
-		sideBar.add(publicChooser);
+		sideBar.add(recipChooser);
+		
+		//Adding the button that lets you add new public keys.
+		addPubKey= new JButton("Add Recipient's Key");
+		addPubKey.addActionListener(addPubList);
+		
+		sideBar.add(addPubKey);
 		
 		//One more filler!
 		sideBar.add(new JLabel(""));
@@ -636,7 +691,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 	}
 	
-	private class PublicKeyButtonActionListener implements ActionListener {
+	private class ChooseRecipientActionListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -648,7 +703,7 @@ public class SuperSecretSpyCoder extends JPanel{
 				Object[] keyNamesArray= keyNames.toArray();
 				
 				if(keyNames.isEmpty()){
-					JOptionPane.showMessageDialog(new JFrame(), "The \"Keys\" folder is empty. Add public keys to it.");
+					JOptionPane.showMessageDialog(new JFrame(), "The \"Keys\" folder is empty. Generate a new set of keys for yourself then add others public keys to it.");
 					keyChoice=0;
 					try{
 						updateConfig();
@@ -701,6 +756,32 @@ public class SuperSecretSpyCoder extends JPanel{
 			
 		}
 
+	}
+	
+	private class AddPublicKeyActionListener implements ActionListener{
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			//open filechooser here.
+			jfc.setSelectedFile(null);
+			int result= jfc.showOpenDialog(SuperSecretSpyCoder.this);
+			
+			if(result == JFileChooser.APPROVE_OPTION){
+				try{
+					File chosenFile= jfc.getSelectedFile();
+					
+					File keyDir= new File("Keys");
+					
+					String endLocation= keyDir.getAbsolutePath() + "\\" + chosenFile.getName();
+					
+					Files.move(chosenFile.toPath(), Paths.get(endLocation), StandardCopyOption.REPLACE_EXISTING);
+				}
+				catch(Exception e){
+
+				}
+			}
+		}
+		
 	}
 	
 	private class HelpListener implements ActionListener{
@@ -844,6 +925,51 @@ public class SuperSecretSpyCoder extends JPanel{
 		}
 	}
 	
+	private class LookAndFeelActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			String result = (String) JOptionPane.showInputDialog(null, "Choose an appearance. (Requires restart to take effect)", "Choose Appearance", JOptionPane.QUESTION_MESSAGE, null, appearanceChoices, appearanceChoices[appearanceChoice]);
+			
+			if(result!=null){
+			int i;
+			
+			for(i=0; i<appearanceChoices.length; i++){
+				if(appearanceChoices[i].equals(result)){
+					break;
+				}
+			}
+			
+			appearanceChoice=i;
+			
+			
+			if(appearanceChoice==0){
+				try{
+					UIManager.setLookAndFeel("javax.swing.defaultlaf");
+				}
+				catch(Exception exc){
+					
+				}
+			}
+			else{
+				try{
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				}
+				catch(Exception exc){
+					
+				}
+			}
+			
+			try{
+			updateConfig();
+			}
+			catch(Exception ex){
+				
+			}
+			}
+		}
+	}
+	
 	public void updateText(File file){	
 		
 		try{
@@ -881,6 +1007,8 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		properties.setProperty("font", Integer.toString(fontChoice));
 		properties.setProperty("fontSize", Integer.toString(fontSizeChoice));
+		
+		properties.setProperty("appearanceChoice", Integer.toString(appearanceChoice));
 		
 		
 		if(codename!=null){
