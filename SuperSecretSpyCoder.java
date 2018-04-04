@@ -53,6 +53,8 @@ public class SuperSecretSpyCoder extends JPanel{
 		final private static String[] fontSizeChoices= {"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"};
 		private static int fontSizeChoice= 6;
 		
+		private static int keyChoice= 0;
+		
 		private static boolean hasAConfig=false; //Only used so the popup will appear once the software has already started.
 		private static boolean hasACodename=false;
 		
@@ -82,6 +84,14 @@ public class SuperSecretSpyCoder extends JPanel{
 		//Try to find the public key based on the preferences
 		try{
 			publicFile= new File(properties.getProperty("publicKey"));
+		}
+		catch(Exception exc){
+			
+		}
+		
+		//Try to find the public key based on the preferences
+		try{
+			keyChoice= Integer.parseInt(properties.getProperty("keyChoice"));
 		}
 		catch(Exception exc){
 			
@@ -329,7 +339,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		
 		//Select Public Key
-		JMenuItem selectPublicKeyMenuItem= new JMenuItem("Select Recipient's Public Key");
+		JMenuItem selectPublicKeyMenuItem= new JMenuItem("Select Recipient");
 		rsaMenu.add(selectPublicKeyMenuItem);
 		PublicKeyButtonActionListener pubList= new PublicKeyButtonActionListener();
 		selectPublicKeyMenuItem.addActionListener(pubList);
@@ -410,7 +420,7 @@ public class SuperSecretSpyCoder extends JPanel{
 		
 		sideBar.add(publicName);
 		
-		publicChooser= new JButton("Select Recipient's Public Key");
+		publicChooser= new JButton("Select Recipient");
 		publicChooser.addActionListener(pubList);
 
 		sideBar.add(publicChooser);
@@ -630,19 +640,53 @@ public class SuperSecretSpyCoder extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			//open filechooser here.
-			jfc.setSelectedFile(null);
-			int result= jfc.showOpenDialog(SuperSecretSpyCoder.this);
 			
-			if(result == JFileChooser.APPROVE_OPTION){
+			File keyDir= new File("Keys");
+			
+			if(keyDir.exists()){
+				ArrayList<String> keyNames= new ArrayList<String>(Arrays.asList(keyDir.list()));
+				Object[] keyNamesArray= keyNames.toArray();
+				
+				if(keyNames.isEmpty()){
+					JOptionPane.showMessageDialog(new JFrame(), "The \"Keys\" folder is empty. Add public keys to it.");
+					keyChoice=0;
+					try{
+						updateConfig();
+					}
+					catch(Exception ex){
+						
+					}
+				}
+				else{
+					for(int i=0; i<keyNamesArray.length; i++){
+					String name= ((String) keyNamesArray[i]);
+					if(name.contains("-Public.txt")){
+						keyNamesArray[i]= name.replace("-Public.txt", "");
+					}
+				}
+				
+				String result= (String) JOptionPane.showInputDialog(null, "Choose a recipient.", "Choose Recipient", JOptionPane.QUESTION_MESSAGE, null, keyNamesArray, keyNamesArray[keyChoice]);
+			
+				if(result!=null){
+					int i;
+			
+					for(i=0; i<keyNamesArray.length; i++){
+						if(keyNamesArray[i].equals(result)){
+							break;
+						}
+					}
+			
+					keyChoice=i;
+			
+					publicFile= new File(".\\Keys\\" + keyNamesArray[keyChoice] + "-Public.txt");
+				}
+			
 				try{
-					publicFile= jfc.getSelectedFile();
-					
 					Scanner publicScan = new Scanner(publicFile);
 					
 					e=new BigInteger(publicScan.nextLine());
 					public_n=new BigInteger(publicScan.nextLine());
-					
+						
 					publicName.setText("Recipient: " + publicFile.getName().replace("-Public.txt", ""));
 					
 					updateConfig();
@@ -650,7 +694,11 @@ public class SuperSecretSpyCoder extends JPanel{
 				catch(Exception e){
 				
 				}
+			
+				}
+				
 			}
+			
 		}
 
 	}
@@ -828,6 +876,8 @@ public class SuperSecretSpyCoder extends JPanel{
 		else{
 			properties.setProperty("publicKey", "null");
 		}
+		
+		properties.setProperty("keyChoice", Integer.toString(keyChoice));
 		
 		properties.setProperty("font", Integer.toString(fontChoice));
 		properties.setProperty("fontSize", Integer.toString(fontSizeChoice));
